@@ -18,8 +18,7 @@ function loadCmds(folderPath) {
             // It's a command file
             const command = require(filePath);
             commands[command.name] = command;
-        } else if (stat.isDirectory() && (filePath === commandsFolderPath)) {
-            console.log(filePath + `   ${path.join(__dirname,"..","cmd")}`);
+        } else if (stat.isDirectory() && (folderPath === commandsFolderPath)) {
             // It's a category folder
             loadCmds(filePath);
         }
