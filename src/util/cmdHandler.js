@@ -9,8 +9,6 @@ const {commands} = require("./loadCmds");
         commands[commandName].execute(msg, args.slice(1));
     }
 }
-function getCommands(){
-    return commands;
-}
 
-module.exports = { runCommand, getCommands} 
+
+module.exports = { runCommand} 
