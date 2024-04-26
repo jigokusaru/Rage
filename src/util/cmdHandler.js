@@ -1,14 +1,20 @@
 // cmdHandler.js
 
 const {commands} = require("./loadCmds");
+
+const cmds = commands;
 // Export the getCommand function
  function runCommand(msg, args) {
     const commandName = args[0].toLowerCase();
-    if (commands[commandName]) {
+    if (cmds[commandName]) {
         // Execute the command
-        commands[commandName].execute(msg, args.slice(1));
+        cmds[commandName].execute(msg, args.slice(1));
     }
 }
 
+function getCommands(){
+    return cmds
+}
 
-module.exports = { runCommand} 
+
+module.exports = { runCommand, getCommands} 
