@@ -1,6 +1,7 @@
 // general.js
 
 // Define an array to hold all the general commands
+const funCommands = require("./fun")
 const generalCommands = [];
 
 // Define the ping command
@@ -18,7 +19,7 @@ const helpCommand = {
   description: "lists the commands",
   usage: "help",
   execute: (message) => {
-    commands = [...generalCommands.map(command => command.name)]
+    commands = [...generalCommands.map(command => command.name),...funCommands.map(command => command.name)]
     message.reply(commands.sort().join(', '));
   },
 };
@@ -51,6 +52,6 @@ const evalCommand = {
 // Add the ping command to the list
 generalCommands.push(pingCommand);
 generalCommands.push(helpCommand);
-generalCommands.push(evalCommand)
+generalCommands.push(evalCommand);
 
 module.exports = generalCommands;
