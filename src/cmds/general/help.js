@@ -1,6 +1,6 @@
 // help.js
 
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder  } = require('discord.js');
 const { commands } = require('../../util/loadCmds');
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
 
     execute(msg, args) {
         // Create an embed to display the list of commands
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('Available Commands')
             .setDescription('Here are the available commands:')
