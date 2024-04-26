@@ -1,8 +1,10 @@
 // index.js
 
 require("dotenv").config();
+require('./dbHandler.js');
 const { Client, GatewayIntentBits } = require("discord.js");
 const { handleCommand } = require("./cmdHandler.js");
+
 
 const client = new Client({
   intents: [
