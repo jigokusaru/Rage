@@ -2,6 +2,7 @@
 
 // Define an array to hold all the general commands
 const funCommands = require("./fun")
+const { EmbedBuilder } = require("discord.js");
 const generalCommands = [];
 
 // Define the ping command
@@ -19,8 +20,24 @@ const helpCommand = {
   description: "lists the commands",
   usage: "help",
   execute: (message) => {
-    commands = [...generalCommands.map(command => command.name),...funCommands.map(command => command.name)]
-    message.reply(commands.sort().join(', '));
+    //commands = [...generalCommands.map(command => command.name),...funCommands.map(command => command.name)]
+    const helpEmbed = {
+      color: 0xab0000,
+      title: "Command List",
+      description: "A list of commands Rage can use.",
+      fields:[
+        {
+          name: "General Cmmands",
+          value: `${generalCommands.map(command => command.name)}`,
+        },
+        {
+          name: "Fun Cmmands",
+          value: `${funCommands.map(command => command.name)}`,
+        }
+      ],
+      timestamp: new Date().toISOString(),
+    }
+    message.reply({ embeds: [helpEmbed] });
   },
 };
 
