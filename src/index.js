@@ -27,7 +27,6 @@ client.on("messageCreate", (message) => {
       .trim()
       .split(/ +/)
       .filter((args) => args.trim());
-    console.log(message);
     // Call the handleCommand function
     handleCommand(args, message);
   }

@@ -7,7 +7,6 @@ const generalCommands = require("./cmds/general.js");
 function handleCommand(args, message) {
   if (args.length > 0) {
     const foundCommand = generalCommands.find((cmd) => cmd.name === args[0]);
-    console.log(foundCommand)
     if (foundCommand) {
       // Execute the corresponding command function
       foundCommand.execute(message);
