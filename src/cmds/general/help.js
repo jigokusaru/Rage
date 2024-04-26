@@ -1,7 +1,7 @@
 // help.js
 
 const { EmbedBuilder } = require("discord.js");
-const { getCommands } = require("../../util/cmdHandler");
+const { commands } = require("../../util/loadCmds");
 
 module.exports = {
   name: "help",
@@ -18,8 +18,8 @@ module.exports = {
       .setTimestamp();
 
     // Add each command to the embed
-    for (const commandName in getCommands) {
-      const command = getCommands()[commandName];
+    for (const commandName in commands) {
+      const command = commands[commandName];
       embed.addField(command.name, command.description);
     }
 
