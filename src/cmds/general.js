@@ -61,9 +61,15 @@ const evalCommand = {
         try {
             // Evaluate the code
             const result = eval(code);
-            message.reply(`Result: ${result}`);
+            message.reply(`Result: ${result}`).catch(error => {
+              console.error('Error while replying:', error);
+              // Handle the error here, such as sending a message to notify the user or logging it.
+            });
         } catch (error) {
-            message.reply(`Error: ${error.message}`);
+            message.reply(`Error: ${error.message}`).catch(e => {
+              console.error('Error while replying:', e);
+              // Handle the error here, such as sending a message to notify the user or logging it.
+            });;
         }
     },
 };

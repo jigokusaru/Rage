@@ -4,7 +4,6 @@ require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const { handleCommand } = require("./cmdHandler.js");
 
-
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -13,7 +12,7 @@ const client = new Client({
   ], // Add your desired intents here
 });
 
-client.botMain = {}
+client.botMain = {};
 
 // Event: When the bot is ready
 client.once("ready", () => {
@@ -23,6 +22,7 @@ client.once("ready", () => {
 // Event: When a message is created
 client.on("messageCreate", (message) => {
   // Ignore messages from bots
+
   if (message.author.bot) return;
   if (message.content.startsWith(`<@${client.user.id}>`)) {
     const args = message.content
@@ -38,4 +38,4 @@ client.on("messageCreate", (message) => {
 // Log in to Discord with the bot token from .env
 client.login(process.env.TOKEN);
 
-module.exports = {client}
+module.exports = { client };
