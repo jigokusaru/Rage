@@ -14,6 +14,8 @@ const client = new Client({
   ], // Add your desired intents here
 });
 
+client.botMain = {}
+
 // Event: When the bot is ready
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.username}!`);
@@ -36,3 +38,5 @@ client.on("messageCreate", (message) => {
 
 // Log in to Discord with the bot token from .env
 client.login(process.env.TOKEN);
+
+module.exports = {client}
