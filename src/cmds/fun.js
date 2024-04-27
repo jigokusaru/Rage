@@ -1,6 +1,5 @@
 const funCommands = [];
 const { EmbedBuilder } = require("discord.js");
-const {setBlackjack, getBlackjack} = require("../dbHandler")
 
 // Define a deck of cards
 const suits = ["♠️", "♡", "♢", "♣️"];

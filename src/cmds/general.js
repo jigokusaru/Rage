@@ -1,6 +1,6 @@
 // general.js
-const {addUser, addColumn,setBlackjack, getBlackjack} = require("../dbHandler");
-const {client} = require('../index.js');
+const {DbHandler} = require("../dbHandler");
+//const {client} = require('../index.js');
 
 // Define an array to hold all the general commands
 const funCommands = require("./fun")
