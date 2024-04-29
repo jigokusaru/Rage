@@ -1,41 +1,60 @@
-// index.js
-
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
-const { handleCommand } = require("./cmdHandler.js");
+const { CmdHandler } = require("./util/cmdHandler");
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ], // Add your desired intents here
-});
-
-client.botMain = {};
-
-// Event: When the bot is ready
-client.once("ready", () => {
-  console.log(`Logged in as ${client.user.username}!`);
-});
-
-// Event: When a message is created
-client.on("messageCreate", (message) => {
-  // Ignore messages from bots
-
-  if (message.author.bot) return;
-  if (message.content.startsWith(`<@${client.user.id}>`)) {
-    const args = message.content
-      .slice(`<@${client.user.id}>`.length)
-      .trim()
-      .split(/ +/)
-      .filter((args) => args.trim());
-    // Call the handleCommand function
-    handleCommand(args, message);
+const cmdhandler = new CmdHandler()
+class Bot {
+  constructor() {
+    this.client = new Client({
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+      ],
+    }),
+    this.cmdHandler = cmdhandler;
   }
-});
+  onReady() {
+    this.client.once("ready", () => {
+      this.cmdHandler.loadAllCmds();
+      console.log(`${this.client.user.username} is ready!`);
+    });
+  }
 
-// Log in to Discord with the bot token from .env
-client.login(process.env.TOKEN);
+  onMessage() {
+    this.client.on(`messageCreate`, (msg) => {
+      if (msg.author.bot) return;
+      const prefixes = [`<@${this.client.user.id}>`, "$"];
+      const content = msg.content.trim();
 
-module.exports = { client };
+      // Check if the message starts with any of the prefixes
+      const prefix = prefixes.find((p) => content.startsWith(p));
+
+      if (!prefix) return; // No valid prefix found
+
+      const command = content
+        .slice(prefix.length)
+        .trim()
+        .split(/ +/)
+        .filter((args) => args.trim());
+
+      if (command.length == 0 && prefix === `<@${this.client.user.id}>`) {
+        msg.channel.send("WHAT THE FUCK DO YOU WANT!? Do I look ready!?");
+      } else if(command.length > 0){
+        const cmd = command[0]
+        const args = command.slice(1);
+        this.cmdHandler.runCmd(this,cmd,args,msg)
+      }
+    });
+  }
+
+
+  login() {
+    this.client.login(process.env.TOKEN);
+  }
+}
+const bot = new Bot();
+bot.onReady();
+bot.onMessage();
+bot.login();
