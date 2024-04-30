@@ -1,7 +1,7 @@
 const fun_dice = {
   name: "dice",
   description: "Roll dice according to the provided notation.",
-  call: ["roll", "Dice"],
+  call: ["roll", "dice"],
   usage: "roll <dice notation>",
   execute: (bot, cmd, args, msg) => {
     // Function to roll a single dice with given sides

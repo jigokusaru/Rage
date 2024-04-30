@@ -1,23 +1,25 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const { CmdHandler } = require("./util/cmdHandler");
+const { DbHandler } = require("./util/dbHandler");
 
-const cmdhandler = new CmdHandler()
 class Bot {
   constructor() {
-    this.client = new Client({
+    (this.client = new Client({
       intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
       ],
-    }),
-    this.cmdHandler = cmdhandler;
+    })),
+      (this.cmdHandler = new CmdHandler());
+    this.dbHandler = new DbHandler("discord_db.db");
   }
   onReady() {
     this.client.once("ready", () => {
       this.cmdHandler.loadAllCmds();
+      this.dbHandler.initializeDb();
       console.log(`${this.client.user.username} is ready!`);
     });
   }
@@ -38,17 +40,19 @@ class Bot {
         .trim()
         .split(/ +/)
         .filter((args) => args.trim());
-
+      bot.dbHandler
+        .addUser("1234567890")
+        .then(() => console.log("User added."))
+        .catch((err) => console.error(err.message));
       if (command.length == 0 && prefix === `<@${this.client.user.id}>`) {
         msg.channel.send("WHAT THE FUCK DO YOU WANT!? Do I look ready!?");
-      } else if(command.length > 0){
-        const cmd = command[0]
+      } else if (command.length > 0) {
+        const cmd = command[0];
         const args = command.slice(1);
-        this.cmdHandler.runCmd(this,cmd,args,msg)
+        this.cmdHandler.runCmd(this, cmd, args, msg);
       }
     });
   }
-
 
   login() {
     this.client.login(process.env.TOKEN);
