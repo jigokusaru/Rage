@@ -1,29 +1,66 @@
-class LevelHandler {
-  constructor(dbHandler) {
-      this.dbHandler = dbHandler;
-      this.maxExp = this.expForLevel(999);
+require("dotenv").config();
+const { Client, GatewayIntentBits } = require("discord.js");
+const { CmdHandler } = require("./util/cmdHandler");
+const { DbHandler } = require("./util/dbHandler");
+
+
+class Bot {
+  constructor() {
+    (this.client = new Client({
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+      ],
+    })),
+      (this.cmdHandler = new CmdHandler());
+    this.dbHandler = new DbHandler("discord_db.db");
+    this.levelHandler = new this.levelHandler(this.dbHandler)
+  }
+  onReady() {
+    this.client.once("ready", () => {
+      this.cmdHandler.loadAllCmds();
+      this.dbHandler.initializeDb();
+      console.log(`${this.client.user.username} is ready!`);
+    });
   }
 
-  // Method to calculate the experience needed for a given level
-  expForLevel(lvl) {
-      return 5 * Math.pow(lvl, 2) + 50 * lvl + 100;
-  }
+  onMessage() {
+    this.client.on(`messageCreate`, (msg) => {
+      if (msg.author.bot) return;
+      const prefixes = [`<@${this.client.user.id}>`, "$"];
+      const content = msg.content.trim();
 
-  // Method to calculate the current level based on experience
-  async getCurrentLevel(discord_id) {
-      const query = 'SELECT exp FROM users WHERE discord_id = ?';
-      const params = [discord_id];
-      const result = await this.dbHandler.runQuery(query, params);
-      const exp = result[0].exp;
+      // Check if the message starts with any of the prefixes
+      const prefix = prefixes.find((p) => content.startsWith(p));
 
-      let level = 0;
-      while (this.expForLevel(level) <= exp) {
-          level++;
+      if (!prefix) return; // No valid prefix found
+
+      const command = content
+        .slice(prefix.length)
+        .trim()
+        .split(/ +/)
+        .filter((args) => args.trim());
+      bot.dbHandler
+        .addUser("1234567890")
+        .then(() => console.log("User added."))
+        .catch((err) => console.error(err.message));
+      if (command.length == 0 && prefix === `<@${this.client.user.id}>`) {
+        msg.channel.send("WHAT THE FUCK DO YOU WANT!? Do I look ready!?");
+      } else if (command.length > 0) {
+        const cmd = command[0];
+        const args = command.slice(1);
+        this.cmdHandler.runCmd(this, cmd, args, msg);
       }
+    });
+  }
 
-      // Subtract 1 because the loop overshoots the actual level
-      return level - 1;
+  login() {
+    this.client.login(process.env.TOKEN);
   }
 }
-
-module.exports = { LevelHandler };
+const bot = new Bot();
+bot.onReady();
+bot.onMessage();
+bot.login();
