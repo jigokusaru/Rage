@@ -16,8 +16,11 @@ const general_eval = {
       const code = args.join(" ");
 
       try {
+        // Check if the code is valid JavaScript
+        new Function(code);
+
         // Evaluate the code
-        const result = await eval(`(async () => { return ${code} })()`);
+        const result = await eval(`(async () => { try { return ${code} } catch (error) { return error; } })()`);
         if (result !== undefined) {
           msg.channel
             .send(`Result: ${result}`)
