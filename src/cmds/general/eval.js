@@ -8,7 +8,7 @@ const general_eval = {
       // Check if the author's ID matches the allowed IDs
       const allowedUserIds = ["424337832648376333", "113375429414416384"];
       if (!allowedUserIds.includes(msg.author.id)) {
-        reject("User not allowed to use this command.");
+        resolve("User not allowed to use this command.");
         return;
       }
 
@@ -16,36 +16,16 @@ const general_eval = {
       const code = args.join(" ");
 
       try {
-        // Check if the code is valid JavaScript
-        new Function(code);
-
-        // Evaluate the code
-        const result = await eval(`(async () => { try { return ${code} } catch (error) { return error; } })()`);
-        if (result !== undefined) {
-          msg.channel
-            .send(`Result: ${result}`)
-            .then(() => resolve())
-            .catch((error) => {
-              console.error("Error while replying:", error);
-              reject(error);
-            });
-        } else {
-          msg.channel
-            .send("The evaluated code returned undefined.")
-            .then(() => resolve())
-            .catch((error) => {
-              console.error("Error while replying:", error);
-              reject(error);
-            });
-        }
+        // Evaluate the code and handle promises
+        const result = await eval(`(async () => { return ${code} })()`);
+        
+        // Send the result back to the channel
+        msg.channel.send(`Result: ${result}`);
+        resolve();
       } catch (error) {
-        msg.channel
-          .send(`Error: ${error.message}`)
-          .then(() => reject(error))
-          .catch((e) => {
-            console.error("Error while replying:", e);
-            reject(e);
-          });
+        // If there's an error, send it back to the channel
+        msg.channel.send(`Error: ${error.message}`);
+        resolve();
       }
     });
   },

@@ -61,13 +61,20 @@ class CmdHandler {
     }
   }
 
-  runCmd(bot, cmd, args, msg) {
+  async runCmd(bot, cmd, args, msg) {
     const command = Object.values(this.cmds).find((command) =>
       command.call.includes(cmd)
     );
 
     if (command) {
+      const index = await bot.dbHandler.getId(msg.author.id)
       command.execute(bot, cmd, args, msg);
+      await bot.dbHandler
+        .addUser(msg.author.id)
+        .then(() => console.log("User added."))
+        .catch((err) => console.error(err.message));
+      await bot.levelHandler.addExp(msg.author.id,1)
+      await bot.achievementHandler.setAchievement(index ,0,msg);
     }
   }
 }
