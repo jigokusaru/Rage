@@ -4,6 +4,7 @@ const { CmdHandler } = require("./util/cmdHandler");
 const { DbHandler } = require("./util/dbHandler");
 const { LevelHandler } = require("./util/levelHandler");
 const { AchievementHandler } = require("./util/achievmentHandler");
+const { GameHandler } = require("./util/gameHandler");
 
 class Bot {
   constructor() {
@@ -18,6 +19,7 @@ class Bot {
       (this.cmdHandler = new CmdHandler());
     this.dbHandler = new DbHandler("discord_data");
     this.levelHandler = new LevelHandler(this);
+    this.gameHandler = new GameHandler()
     this.achievementHandler = new AchievementHandler(this);
     this.achievments = [
       {

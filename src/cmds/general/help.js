@@ -1,3 +1,4 @@
+// fun_hangman.js
 const { EmbedBuilder } = require("discord.js");
 
 const general_help = {
@@ -7,11 +8,30 @@ const general_help = {
   call: ["help"], // Define the call property
   execute: (bot, cmd, args, msg) => {
     const commands = bot.cmdHandler.cmds;
+    let categorizedCommands = {};
+
+    // Categorize commands
+    for (const key in commands) {
+      const category = key.split('_')[0];
+      const cmdName = key.split('_')[1];
+      if (!categorizedCommands[category]) {
+        categorizedCommands[category] = [];
+      }
+      categorizedCommands[category].push(cmdName);
+    }
 
     // If a command name is provided as an argument
     if (args.length > 0) {
       const commandName = args[0];
-      const command = commands[`general_${commandName}`];
+      let command;
+
+      // Look for the command in all available commands
+      for (const key in commands) {
+        if (commands[key].call.includes(commandName)) {
+          command = commands[key];
+          break;
+        }
+      }
 
       // If the command exists
       if (command) {
@@ -30,18 +50,7 @@ const general_help = {
         msg.channel.send(`The command "${commandName}" does not exist.`);
       }
     } else {
-      // If no command name is provided, display the list of commands as before
-      const categorizedCommands = {};
-
-      for (const commandName in commands) {
-        const categoryName = Object.keys({ [commandName]: commands[commandName] })[0].split('_')[0];
-        const cmdName = Object.keys({ [commandName]: commands[commandName] })[0].split('_')[1];
-        if (!categorizedCommands[categoryName]) {
-          categorizedCommands[categoryName] = [];
-        }
-        categorizedCommands[categoryName].push(cmdName);
-      }
-
+      // If no command name is provided, display the list of commands
       const embed = new EmbedBuilder()
         .setColor("#ab0000")
         .setTitle("Available Commands");
@@ -51,7 +60,7 @@ const general_help = {
         embed.addFields({ name: `${categoryName.toUpperCase()} Commands`, value: commandsInCategory });
       }
 
-      embed.setTimestamp()
+      embed.setTimestamp();
 
       msg.channel.send({embeds: [embed]});
     }
