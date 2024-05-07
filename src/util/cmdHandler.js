@@ -60,21 +60,54 @@ class CmdHandler {
       console.log(`Command '${cmdName}' not found.`);
     }
   }
+  
 
   async runCmd(bot, cmd, args, msg) {
-    const command = Object.values(this.cmds).find((command) =>
-      command.call.includes(cmd)
+    // Find the command object
+    const commandKey = Object.keys(this.cmds).find((key) =>
+      this.cmds[key].call.includes(cmd)
     );
+    const command = this.cmds[commandKey];
 
     if (command) {
-      const index = await bot.dbHandler.getId(msg.author.id)
+      // Check if the command is an RPG command and not the 'startrpg' command
+      if (commandKey.startsWith("rpg_") && command.name !== "startrpg") {
+        // Check if a game has been started in the guild
+        let tables = await bot.dbHandler.runQuery("SHOW TABLES LIKE ?", [
+          `rpg_${msg.guild.id}%`,
+        ]);
+        if (tables.length === 0) {
+          // If no game has been started, inform the user
+          return msg.channel.send("A game needs to be started by staff.");
+        }
+
+        // Extract the table name
+        let tableName = Object.values(tables[0])[0];
+
+        // Remove the 'rpg_' prefix from the table name
+        let ids = tableName.replace("rpg_", "");
+
+        // Extract the guild ID and channel ID
+        let guildIdLength = msg.guild.id.length;
+        let extractedGuildId = ids.substring(0, guildIdLength);
+        let rpgChannelId = ids.substring(guildIdLength);
+
+        if (msg.channel.id !== rpgChannelId) {
+          // If the command is not being run in the correct channel, inform the user
+          return msg.channel.send(
+            "You have to run the command in the correct channel."
+          );
+        }
+      }
+
+      const index = await bot.dbHandler.getId(msg.author.id);
       command.execute(bot, cmd, args, msg);
       await bot.dbHandler
         .addUser(msg.author.id)
         .then(() => console.log("User added."))
         .catch((err) => console.error(err.message));
-      await bot.levelHandler.addExp(msg.author.id,1)
-      await bot.achievementHandler.setAchievement(index ,0,msg);
+      await bot.levelHandler.addExp(msg.author.id, 1);
+      await bot.achievementHandler.setAchievement(index, 0, msg);
     }
   }
 }
