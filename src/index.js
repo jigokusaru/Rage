@@ -1,13 +1,13 @@
 // index.js
 require("dotenv").config();
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, PresenceUpdateStatus,ActivityType  } = require("discord.js");
 const { CmdHandler } = require("./util/cmdHandler");
 const { DbHandler } = require("./util/dbHandler");
 const { LevelHandler } = require("./util/levelHandler");
 const { AchievementHandler } = require("./util/achievmentHandler");
 const { GameHandler } = require("./util/gameHandler");
-const { RpgHandler } = require("./util/rpgHandler");
-const { ShopHandler } = require("./cmds/rpg/shopHandler");
+//const { RpgHandler } = require("./disabled/rpgHandler");
+//const { ShopHandler } = require("./disabled/shopHandler");
 const createPokedexHandler = require("./util/pokedexHandler");
 
 class Bot {
@@ -23,12 +23,12 @@ class Bot {
       (this.cmdHandler = new CmdHandler());
       createPokedexHandler().then(handler => {
         this.pokedexHandler = handler;
-        this.shopHandler = new ShopHandler(this); // Create the ShopHandler after the PokedexHandler is ready
+        //this.shopHandler = new ShopHandler(this); // Create the ShopHandler after the PokedexHandler is ready
       });
     this.dbHandler = new DbHandler("discord_data");
     this.levelHandler = new LevelHandler(this);
     this.gameHandler = new GameHandler();
-    this.rpgHandler = new RpgHandler(this);
+    //this.rpgHandler = new RpgHandler(this);
     this.achievementHandler = new AchievementHandler(this);
     this.achievments = [
       {
@@ -49,6 +49,7 @@ class Bot {
       this.dbHandler.initializeDb();
       this.achievementHandler.addAchievements(this.achievments);
       console.log(`${this.client.user.username} is ready!`);
+      this.client.user.setPresence({ activities: [{ name: 'you suffer!' ,type: ActivityType.Watching}], status: PresenceUpdateStatus.Dnd})
     });
   }
 
@@ -81,7 +82,7 @@ class Bot {
 
   onInteraction() {
     this.client.on("interactionCreate", async (interaction) => {
-      await this.shopHandler.handleInteraction(interaction,this);
+      //await this.shopHandler.handleInteraction(interaction,this);
     });
   }
 

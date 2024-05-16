@@ -1,3 +1,4 @@
 .env
+disabled/
 node_modules/
 discord_data.db
